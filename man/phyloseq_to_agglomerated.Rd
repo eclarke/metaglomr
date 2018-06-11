@@ -2,19 +2,20 @@
 % Please edit documentation in R/metaglomr.R
 \name{phyloseq_to_agglomerated}
 \alias{phyloseq_to_agglomerated}
-\title{Convert a phyloseq object to an agglomerated (melted) dataframe.}
+\title{Convert a phyloseq object to an agglomerated dataframe.}
 \usage{
-phyloseq_to_agglomerated(ps, sample_col, otu_col, count_col)
+phyloseq_to_agglomerated(ps, sample_col, otu_col = "otu_id",
+  count_col = "count")
 }
 \arguments{
 \item{ps}{a phyloseq object}
 
+\item{sample_col}{the sample_data() column corresponding to rownames(otu_table()), as a string}
+
 \item{otu_col}{the desired name of the otu id column}
 
 \item{count_col}{the desired name of the count column}
-
-\item{sample.col.name}{the sample_data() column corresponding rownames(otu_table()), as a string}
 }
 \description{
-Convert a phyloseq object to an agglomerated (melted) dataframe.
+Convert a phyloseq object to an agglomerated dataframe.
 }
