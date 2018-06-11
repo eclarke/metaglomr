@@ -1,0 +1,132 @@
+---
+title: 'metaglomr: tools for tidy metagenomics'
+author: "Erik Clarke"
+output: 
+  html_document: 
+    toc: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+This is a package to combine counts, sample metadata, and taxonomic annotations into one long-form tidy dataframe for further analysis. It offers functions to switch between phyloseq objects and these 'agglomerated' dataframes.
+
+## Installation
+
+```{r, eval=FALSE}
+devtools::install_github("eclarke/metaglomr")
+```
+
+## Short usage overview
+
+```{r}
+suppressPackageStartupMessages(library(tidyverse))
+library(metaglomr)
+
+data(features)  # A counts matrix, with rows as samples and columns as features
+data(samples)   # A dataframe with sample metadata
+data(taxa)      # A dataframe or matrix with taxonomic annotations for features
+
+# Combine all of these datasets into one long-form dataframe
+(agg <- agglomerated(features, samples, taxa, "sample_id"))
+```
+
+
+## Motivation
+
+In metagenomics, we often work with three distinct datasets: a feature count table, a sample table, and a taxonomic annotation table.
+
+### Feature count table
+The feature count table is is a matrix of features $\times$ samples, and the cells of the matrix are the times that feature was seen in that sample. 
+Features can be OTUs, ASVs, species, genomes, or whatever. 
+Often these come from a biom file.
+
+```{r, }
+data(features)
+features[1:5, 1:15]
+```
+
+### Sample metadata
+
+The sample metadata can be anything about the samples, but frequently contains at least a description of the sample type and study group of each sample. 
+This is frequently referred to as a mapping file in QIIME.
+
+```{r}
+data(samples)
+as_tibble(samples)
+```
+
+### Taxonomic annotations
+This contains taxonomic annotations for all the features (OTUs or otherwise), split by rank (i.e. Kingdom, Phylum, etc).
+
+```{r}
+data(taxa)
+taxa[1:5, ]
+```
+
+### Agglomerating the three datasets
+
+For users of the [tidyverse](https://tidyverse.org), it's frequently easiest to work with long-form
+melted datasets, where each row is a unique observation or data point. 
+The unique reference in these three datasets is the count of a feature in a particular sample. 
+Therefore, we can create a dataframe where each row is this unique combination of feature + sample + count, with additional columns describing the sample and feature further.
+
+```{r}
+(agg <- agglomerated(features, samples, taxa, "sample_id"))
+```
+
+While this may seem overly repetitive (as the metadata is duplicated in lots of rows), R and dplyr actually handle this pretty well. 
+Things only start breaking down with feature tables that have more than > 100,000,000 cells. 
+What this buys you is the ability to use standard tidyverse verbs and operations easily.
+
+## Examples
+
+### Subsetting
+
+Subsetting is easy through the use of the `filter` verb:
+
+```{r}
+filter(agg, study_group == "case")
+filter(agg, Phylum == "Bacteroidetes")
+```
+
+### Adding new columns
+
+Here's how to calculate proportions and add it to your dataframe:
+
+```{r}
+agg <- agg %>%
+  group_by(sample_id) %>%
+  mutate(proportion = count/sum(count))
+
+# Showing just a subset of the data:
+select(agg, sample_id, otu_id, count, proportion)
+```
+
+### Aggregating based on metadata:
+
+Aggregate based on taxonomic rank:
+
+```{r}
+agg %>% 
+  group_by(sample_id, Phylum) %>%
+  summarize(count = sum(count)) %>%
+  ungroup() %>%
+  # re-add sample data that got lost in the summarizing
+  left_join(get_samples(agg, sample_id, study_group, sample_type))
+```
+
+
+### Summarizing
+
+Or find the most prevalent phyla in your study groups:
+
+```{r}
+agg %>% 
+  ungroup() %>%
+  group_by(study_group, Phylum) %>%
+  summarize(mean_proportion = mean(proportion)) %>%
+  top_n(1, mean_proportion)
+```
+
