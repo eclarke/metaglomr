@@ -1,13 +1,11 @@
 ---
 title: 'metaglomr: tools for tidy metagenomics'
 author: "Erik Clarke"
-output: 
-  html_document: 
-    keep_md: yes
+output: github_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, results='asis')
 ```
 
 This is a package to combine counts, sample metadata, and taxonomic annotations into one long-form tidy dataframe for further analysis. It offers functions to switch between phyloseq objects and these 'agglomerated' dataframes.
@@ -21,8 +19,8 @@ devtools::install_github("eclarke/metaglomr")
 ## Short usage overview
 
 ```{r}
+suppressPackageStartupMessages(library(tidyverse))
 library(metaglomr)
-library(tidyverse)
 
 data(features)  # A counts matrix, with rows as samples and columns as features
 data(samples)   # A dataframe with sample metadata
