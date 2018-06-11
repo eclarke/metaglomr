@@ -10,7 +10,7 @@ knitr::opts_chunk$set(echo = TRUE, collapse=TRUE)
 
 This is a package to combine counts, sample metadata, and taxonomic annotations into one long-form tidy dataframe for further analysis. It offers functions to switch between phyloseq objects and these 'agglomerated' dataframes.
 
-[Website](https://eclarke.github.io/metaglomr)
+[Read the documentation.](https://eclarke.github.io/metaglomr)
 
 ## Installation
 
