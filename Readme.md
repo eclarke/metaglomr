@@ -24,10 +24,17 @@ data(taxa)      # A dataframe or matrix with taxonomic annotations for features
 
 # Combine all of these datasets into one long-form dataframe
 agg <- agglomerated(features, samples, taxa, "sample_id")
-str(agg)
+knitr::kable(head(agg))
 ```
 
-Classes 'tbl\_df', 'tbl' and 'data.frame': 1024 obs. of 12 variables: $ sample\_id : chr "S\_1" "S\_2" "S\_3" "S\_4" ... $ otu\_id : chr "f\_1" "f\_1" "f\_1" "f\_1" ... $ count : num 25 78 34 61 258 54 56 58 48 7 ... $ study\_group: Factor w/ 2 levels "case","control": 1 1 1 1 1 1 1 1 2 2 ... $ sample\_type: Factor w/ 4 levels "A","B","C","D": 1 2 3 4 1 2 3 4 1 2 ... $ Kingdom : Factor w/ 1 level "Bacteria": 1 1 1 1 1 1 1 1 1 1 ... $ Phylum : Factor w/ 5 levels "Actinobacteria",..: 2 2 2 2 2 2 2 2 2 2 ... $ Class : Factor w/ 10 levels "Actinobacteria",..: 4 4 4 4 4 4 4 4 4 4 ... $ Order : Factor w/ 20 levels "Actinomycetales",..: 3 3 3 3 3 3 3 3 3 3 ... $ Family : Factor w/ 35 levels "0319-6G20","Actinomycetaceae",..: 24 24 24 24 24 24 24 24 24 24 ... $ Genus : Factor w/ 50 levels "Acinetobacter",..: 31 31 31 31 31 31 31 31 31 31 ... $ Species : Factor w/ 3 levels "intermedia","jejuensis",..: NA NA NA NA NA NA NA NA NA NA ...
+| sample\_id | otu\_id |  count| study\_group | sample\_type | Kingdom  | Phylum        | Class       | Order         | Family             | Genus         | Species |
+|:-----------|:--------|------:|:-------------|:-------------|:---------|:--------------|:------------|:--------------|:-------------------|:--------------|:--------|
+| S\_1       | f\_1    |     25| case         | A            | Bacteria | Bacteroidetes | Bacteroidia | Bacteroidales | Porphyromonadaceae | Porphyromonas | NA      |
+| S\_2       | f\_1    |     78| case         | B            | Bacteria | Bacteroidetes | Bacteroidia | Bacteroidales | Porphyromonadaceae | Porphyromonas | NA      |
+| S\_3       | f\_1    |     34| case         | C            | Bacteria | Bacteroidetes | Bacteroidia | Bacteroidales | Porphyromonadaceae | Porphyromonas | NA      |
+| S\_4       | f\_1    |     61| case         | D            | Bacteria | Bacteroidetes | Bacteroidia | Bacteroidales | Porphyromonadaceae | Porphyromonas | NA      |
+| S\_5       | f\_1    |    258| case         | A            | Bacteria | Bacteroidetes | Bacteroidia | Bacteroidales | Porphyromonadaceae | Porphyromonas | NA      |
+| S\_6       | f\_1    |     54| case         | B            | Bacteria | Bacteroidetes | Bacteroidia | Bacteroidales | Porphyromonadaceae | Porphyromonas | NA      |
 
 Motivation
 ----------
@@ -40,16 +47,16 @@ The feature count table is is a matrix of features × samples, and the cells of 
 
 ``` r
 data(features)
-knitr::kable(features[1:5, 1:10], format = "markdown")
+knitr::kable(features[1:5, 1:15], format = "markdown")
 ```
 
-|      |  f\_1|  f\_2|  f\_3|  f\_4|  f\_5|  f\_6|  f\_7|  f\_8|  f\_9|  f\_10|
-|:-----|-----:|-----:|-----:|-----:|-----:|-----:|-----:|-----:|-----:|------:|
-| S\_1 |    25|   112|   130|   123|   101|    61|   220|    72|    43|     19|
-| S\_2 |    78|   402|    67|   188|    69|    89|   150|    44|   129|    236|
-| S\_3 |    34|   728|   293|   342|     4|     6|    19|   122|   110|     19|
-| S\_4 |    61|    84|    41|     5|   106|    39|    97|    51|    97|     58|
-| S\_5 |   258|    40|    65|   160|    38|    31|    52|    88|    36|     88|
+|      |  f\_1|  f\_2|  f\_3|  f\_4|  f\_5|  f\_6|  f\_7|  f\_8|  f\_9|  f\_10|  f\_11|  f\_12|  f\_13|  f\_14|  f\_15|
+|:-----|-----:|-----:|-----:|-----:|-----:|-----:|-----:|-----:|-----:|------:|------:|------:|------:|------:|------:|
+| S\_1 |    25|   112|   130|   123|   101|    61|   220|    72|    43|     19|    105|     97|     52|     76|    258|
+| S\_2 |    78|   402|    67|   188|    69|    89|   150|    44|   129|    236|     56|     83|    284|     15|    112|
+| S\_3 |    34|   728|   293|   342|     4|     6|    19|   122|   110|     19|    387|      5|    116|     17|    148|
+| S\_4 |    61|    84|    41|     5|   106|    39|    97|    51|    97|     58|    322|     84|    132|      1|     35|
+| S\_5 |   258|    40|    65|   160|    38|    31|    52|    88|    36|     88|     41|     91|    128|    140|    105|
 
 ### 2. Sample metadata
 
@@ -102,13 +109,17 @@ For users of the [tidyverse](https://tidyverse.org), it's frequently easiest to 
 
 ``` r
 agg <- agglomerated(features, samples, taxa, "sample_id")
-print(agg)
+knitr::kable(head(agg))
 ```
 
-A tibble: 1,024 x 12
-====================
-
-sample\_id otu\_id count study\_group sample\_type Kingdom Phylum Class <chr> <chr> <dbl> <fct> <fct> <fct> <fct> <fct> 1 S\_1 f\_1 25 case A Bacteria Bactero… Bacte… 2 S\_2 f\_1 78 case B Bacteria Bactero… Bacte… 3 S\_3 f\_1 34 case C Bacteria Bactero… Bacte… 4 S\_4 f\_1 61 case D Bacteria Bactero… Bacte… 5 S\_5 f\_1 258 case A Bacteria Bactero… Bacte… 6 S\_6 f\_1 54 case B Bacteria Bactero… Bacte… 7 S\_7 f\_1 56 case C Bacteria Bactero… Bacte… 8 S\_8 f\_1 58 case D Bacteria Bactero… Bacte… 9 S\_9 f\_1 48 control A Bacteria Bactero… Bacte… 10 S\_10 f\_1 7 control B Bacteria Bactero… Bacte… \# ... with 1,014 more rows, and 4 more variables: Order <fct>, \# Family <fct>, Genus <fct>, Species <fct>
+| sample\_id | otu\_id |  count| study\_group | sample\_type | Kingdom  | Phylum        | Class       | Order         | Family             | Genus         | Species |
+|:-----------|:--------|------:|:-------------|:-------------|:---------|:--------------|:------------|:--------------|:-------------------|:--------------|:--------|
+| S\_1       | f\_1    |     25| case         | A            | Bacteria | Bacteroidetes | Bacteroidia | Bacteroidales | Porphyromonadaceae | Porphyromonas | NA      |
+| S\_2       | f\_1    |     78| case         | B            | Bacteria | Bacteroidetes | Bacteroidia | Bacteroidales | Porphyromonadaceae | Porphyromonas | NA      |
+| S\_3       | f\_1    |     34| case         | C            | Bacteria | Bacteroidetes | Bacteroidia | Bacteroidales | Porphyromonadaceae | Porphyromonas | NA      |
+| S\_4       | f\_1    |     61| case         | D            | Bacteria | Bacteroidetes | Bacteroidia | Bacteroidales | Porphyromonadaceae | Porphyromonas | NA      |
+| S\_5       | f\_1    |    258| case         | A            | Bacteria | Bacteroidetes | Bacteroidia | Bacteroidales | Porphyromonadaceae | Porphyromonas | NA      |
+| S\_6       | f\_1    |     54| case         | B            | Bacteria | Bacteroidetes | Bacteroidia | Bacteroidales | Porphyromonadaceae | Porphyromonas | NA      |
 
 While this may seem overly repetitive (as the metadata is duplicated in lots of rows), R and dplyr actually handle this pretty well. Things only start breaking down with feature tables that have more than &gt; 100,000,000 cells. What this buys you is the ability to use standard tidyverse verbs and operations easily. Here's how to convert your counts to proportions:
 
@@ -116,31 +127,60 @@ While this may seem overly repetitive (as the metadata is duplicated in lots of 
 agg <- agg %>%
   group_by(sample_id) %>%
   mutate(proportion = count/sum(count))
-select(agg, sample_id, otu_id, count, proportion)
+
+# Showing just a subset of the data:
+knitr::kable(head(select(agg, sample_id, otu_id, count, proportion)))
 ```
 
-A tibble: 1,024 x 4
-===================
+| sample\_id | otu\_id |  count|  proportion|
+|:-----------|:--------|------:|-----------:|
+| S\_1       | f\_1    |     25|   0.0042948|
+| S\_2       | f\_1    |     78|   0.0104278|
+| S\_3       | f\_1    |     34|   0.0050959|
+| S\_4       | f\_1    |     61|   0.0100660|
+| S\_5       | f\_1    |    258|   0.0433832|
+| S\_6       | f\_1    |     54|   0.0081093|
 
-Groups: sample\_id \[16\]
-=========================
+Aggregate based on taxonomic rank:
 
-sample\_id otu\_id count proportion <chr> <chr> <dbl> <dbl> 1 S\_1 f\_1 25 0.00429 2 S\_2 f\_1 78 0.0104 3 S\_3 f\_1 34 0.00510 4 S\_4 f\_1 61 0.0101 5 S\_5 f\_1 258 0.0434 6 S\_6 f\_1 54 0.00811 7 S\_7 f\_1 56 0.00874 8 S\_8 f\_1 58 0.0120 9 S\_9 f\_1 48 0.00635 10 S\_10 f\_1 7 0.00116 \# ... with 1,014 more rows
+``` r
+agg %>% 
+  group_by(sample_id, Phylum) %>%
+  summarize(count = sum(count)) %>%
+  ungroup() %>%
+  # re-add sample data that got lost in the summarizing
+  left_join(get_samples(agg, sample_id, study_group, sample_type))
+```
 
-Or easily find the most prevalent phyla in your study groups:
+    ## Joining, by = "sample_id"
+
+    ## # A tibble: 80 x 5
+    ##    sample_id Phylum         count study_group sample_type
+    ##    <chr>     <fct>          <dbl> <fct>       <fct>      
+    ##  1 S_1       Actinobacteria   363 case        A          
+    ##  2 S_1       Bacteroidetes   1007 case        A          
+    ##  3 S_1       Firmicutes      3616 case        A          
+    ##  4 S_1       Proteobacteria   699 case        A          
+    ##  5 S_1       Spirochaetes     136 case        A          
+    ##  6 S_10      Actinobacteria   627 control     B          
+    ##  7 S_10      Bacteroidetes   1169 control     B          
+    ##  8 S_10      Firmicutes      2869 control     B          
+    ##  9 S_10      Proteobacteria  1043 control     B          
+    ## 10 S_10      Spirochaetes     323 control     B          
+    ## # ... with 70 more rows
+
+Or find the most prevalent phyla in your study groups:
 
 ``` r
 agg %>% 
   ungroup() %>%
   group_by(study_group, Phylum) %>%
   summarize(mean_proportion = mean(proportion)) %>%
-  top_n(1, mean_proportion)
+  top_n(1, mean_proportion) %>%
+  knitr::kable()
 ```
 
-A tibble: 2 x 3
-===============
-
-Groups: study\_group \[2\]
-==========================
-
-study\_group Phylum mean\_proportion <fct> <fct> <dbl> 1 case Firmicutes 0.0172 2 control Bacteroidetes 0.0173
+| study\_group | Phylum        |  mean\_proportion|
+|:-------------|:--------------|-----------------:|
+| case         | Firmicutes    |         0.0171578|
+| control      | Bacteroidetes |         0.0172942|

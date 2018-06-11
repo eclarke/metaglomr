@@ -58,16 +58,15 @@ agglomerated <-
 #' @return the sample metadata, deduplicated
 #' @import dplyr
 #' @export
-get_samples <- function(agg, sample_col, otu_col, count_col, ...) {
-  if (missing(sample_col) | missing(otu_col) | missing(count_col)) {
-    stop("Must specify sample, otu, and count columns")
+get_samples <- function(agg, sample_col, ...) {
+  if (missing(sample_col)) {
+    stop("Must specify sample column")
   }
-  otu_col <- enquo(otu_col)
   sample_col <- enquo(sample_col)
-  count_col <- enquo(count_col)
-  taxa_ranks <- quos(...)
+  sample_metadata <- quos(...)
 
-  samples <- select(agg, -c(UQ(otu_col), UQ(count_col), UQS(taxa_ranks)))
+  samples <- select(agg, UQ(sample_col), UQS(sample_metadata))
+  samples <- ungroup(samples)
   samples <- as.data.frame(distinct(samples))
   rownames(samples) <- samples[[quo_name(sample_col)]]
   samples
@@ -143,10 +142,11 @@ phyloseq_to_agglomerated <- function(ps, sample_col, otu_col="otu_id", count_col
 #' @param sample_col the name of the sample id column in agg
 #' @param otu_col the name of the otu id column in agg
 #' @param count_col the unquoted name of the counts column in agg
-#' @param ... remaining unquoted names of taxonomic ranks (i.e. Kingdom:Species)
+#' @param sample_metadata unquoted names of sample metadata
+#' @param tax_ranks unquoted names of taxonomic ranks (i.e. Kingdom:Species)
 #' @import dplyr
 #' @export
-agglomerated_to_phyloseq <- function(agg, sample_col, otu_col, count_col, ...) {
+agglomerated_to_phyloseq <- function(agg, sample_col, otu_col, count_col, sample_metadata, tax_ranks) {
   if (!requireNamespace("phyloseq", quietly = TRUE)) {
     stop(
       "Package \"phyloseq\" needed for this function to work. Please install it from Bioconductor.",
@@ -156,7 +156,8 @@ agglomerated_to_phyloseq <- function(agg, sample_col, otu_col, count_col, ...) {
   otu_col <- enquo(otu_col)
   sample_col <- enquo(sample_col)
   count_col <- enquo(count_col)
-  tax_ranks <- quos(...)
+  sample_metadata <- quos(sample_metadata)
+  tax_ranks <- quos(tax_ranks)
 
   # Rebuild count matrix
   features <- get_features(agg, UQ(sample_col), UQ(otu_col), UQ(count_col))

@@ -4,18 +4,18 @@
 \alias{get_samples}
 \title{Extract sample metadata from an agglomerated dataframe}
 \usage{
-get_samples(agg, sample_col, otu_col, count_col, ...)
+get_samples(agg, sample_col, ...)
 }
 \arguments{
 \item{agg}{agglomerated dataframe}
 
 \item{sample_col}{unquoted name of the sample id column}
 
+\item{...}{unquoted names of the taxonomic ranks (i.e. Kingdom:Species)}
+
 \item{otu_col}{unquoted name of the otu id column}
 
 \item{count_col}{unquoted name of the count column}
-
-\item{...}{unquoted names of the taxonomic ranks (i.e. Kingdom:Species)}
 }
 \value{
 the sample metadata, deduplicated

@@ -4,7 +4,8 @@
 \alias{agglomerated_to_phyloseq}
 \title{Convert an agglomerated dataframe to a phyloseq object.}
 \usage{
-agglomerated_to_phyloseq(agg, sample_col, otu_col, count_col, ...)
+agglomerated_to_phyloseq(agg, sample_col, otu_col, count_col, sample_metadata,
+  tax_ranks)
 }
 \arguments{
 \item{agg}{the agglomerated dataframe}
@@ -15,7 +16,9 @@ agglomerated_to_phyloseq(agg, sample_col, otu_col, count_col, ...)
 
 \item{count_col}{the unquoted name of the counts column in agg}
 
-\item{...}{remaining unquoted names of taxonomic ranks (i.e. Kingdom:Species)}
+\item{sample_metadata}{unquoted names of sample metadata}
+
+\item{tax_ranks}{unquoted names of taxonomic ranks (i.e. Kingdom:Species)}
 }
 \description{
 Convert an agglomerated dataframe to a phyloseq object.

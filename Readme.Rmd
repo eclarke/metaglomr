@@ -5,7 +5,7 @@ output: github_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, results='asis')
+knitr::opts_chunk$set(echo = TRUE)
 ```
 
 This is a package to combine counts, sample metadata, and taxonomic annotations into one long-form tidy dataframe for further analysis. It offers functions to switch between phyloseq objects and these 'agglomerated' dataframes.
@@ -28,7 +28,7 @@ data(taxa)      # A dataframe or matrix with taxonomic annotations for features
 
 # Combine all of these datasets into one long-form dataframe
 agg <- agglomerated(features, samples, taxa, "sample_id")
-str(agg)
+knitr::kable(head(agg))
 ```
 
 
@@ -42,7 +42,7 @@ Features can be OTUs, ASVs, species, genomes, or whatever.
 
 ```{r, results='asis'}
 data(features)
-knitr::kable(features[1:5, 1:10], format = "markdown")
+knitr::kable(features[1:5, 1:15], format = "markdown")
 ```
 
 ### 2. Sample metadata
@@ -70,29 +70,44 @@ melted datasets, where each row is a unique observation or data point.
 The unique reference in these three datasets is the count of a feature in a particular sample. 
 Therefore, we can create a dataframe where each row is this unique combination of feature + sample + count, with additional columns describing the sample and feature further.
 
-```{r}
+```{r, result="asis"}
 agg <- agglomerated(features, samples, taxa, "sample_id")
-print(agg)
+knitr::kable(head(agg))
 ```
 
 While this may seem overly repetitive (as the metadata is duplicated in lots of rows), R and dplyr actually handle this pretty well. 
 Things only start breaking down with feature tables that have more than > 100,000,000 cells. 
 What this buys you is the ability to use standard tidyverse verbs and operations easily. Here's how to convert your counts to proportions:
 
-```{r}
+```{r, results="asis"}
 agg <- agg %>%
   group_by(sample_id) %>%
   mutate(proportion = count/sum(count))
-select(agg, sample_id, otu_id, count, proportion)
+
+# Showing just a subset of the data:
+knitr::kable(head(select(agg, sample_id, otu_id, count, proportion)))
 ```
 
-Or easily find the most prevalent phyla in your study groups:
+Aggregate based on taxonomic rank:
+
+```{r}
+agg %>% 
+  group_by(sample_id, Phylum) %>%
+  summarize(count = sum(count)) %>%
+  ungroup() %>%
+  # re-add sample data that got lost in the summarizing
+  left_join(get_samples(agg, sample_id, study_group, sample_type))
+```
+
+
+Or find the most prevalent phyla in your study groups:
 
 ```{r}
 agg %>% 
   ungroup() %>%
   group_by(study_group, Phylum) %>%
   summarize(mean_proportion = mean(proportion)) %>%
-  top_n(1, mean_proportion)
+  top_n(1, mean_proportion) %>%
+  knitr::kable()
 ```
 
